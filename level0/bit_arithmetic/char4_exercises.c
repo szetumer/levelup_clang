@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 typedef enum variety {
     REFR,
@@ -9,6 +10,10 @@ typedef enum variety {
     BLOC
 } variety;
 
+typedef struct prototype {
+    unsigned char sig;
+    unsigned char rem[3];
+} prototype;
 
 typedef unsigned char bits[4];
 bits b0 = {0x00, 0x00, 0x00, 0x00};
@@ -29,7 +34,8 @@ bits b14 = {0x0E, 0x00, 0x00, 0x00};
 bits b15 = {0x0F, 0x00, 0x00, 0x00};
 bits b16 = {0x10, 0x00, 0x00, 0x00};
 bits b17 = {0x11, 0x00, 0x00, 0x00};
-
+bits* allbits[] = {&b0, &b1, &b2, &b3, &b4, &b5, &b6, &b7, &b8, &b9, &b10,
+                    &b11, &b12, &b13, &b14, &b15, &b16, &b17};
 typedef unsigned char bytemask;
 bytemask GETVARIETY = 0x03;
 bytemask GETLOCALIZATION = 0x04;
@@ -41,18 +47,24 @@ void printbits(bits);
 void printvariety(variety);
 variety get_variety(bits);
 
-
-
-
 int main(void){
-    printbits(b1);
+    assert(sizeof(bits)==4);
+    assert(sizeof(prototype)==4);
+    for(int i=0; i < 18; i++){
+        printbits(*(allbits[i]));
+    }
+    for(int i=0; i < 18; i++){
+        printvariety(get_variety(*(allbits[i])));
+        printf("\n");
+    }
     return 0;
 }
 
 void printbits(bits b){
     for(int i = 0; i < 4; i++) {
-        printf("byte %d: 0x%02X\n", i, b[i]);
+        printf("0x%02X; ", b[i]);
     }
+    printf("\n");
 }
 
 void printvariety(variety v){
